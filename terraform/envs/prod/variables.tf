@@ -3,11 +3,12 @@ variable "env" {
   type        = string
 }
 
-variable "location" {
+
+variable "subscription_id" {
   description = "Azure region"
   type        = string
 }
-variable "vnet_address_space" {
+variable "location" {
   description = "Azure region"
   type        = string
 }
@@ -17,3 +18,8 @@ variable "resource_group_name" {
   type        = string
 }
 
+
+variable "vnet_address_space" {
+  description = "Azure region"
+  type        = string
+}

@@ -1,19 +1,59 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  branches:
+    include:
+      - main
+
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  terraformVersion: '4.3.0'  # Specify the Terraform version
+  azureServiceConnection: 'azurerm'  # Azure service connection name
+  backendResourceGroup: 'azureplatfrom' # Remote backend Resource Group
+  backendStorageAccount: 'platfromterrstorage'  # Remote backend storage account
+  backendContainer: 'platfromtfbacken'  # Remote backend storage container
+  backendKey: 'terraform.tfstate'  # State file name in remote backend
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+  # Stage 1: Initialization (init, validate, lint)
+  - stage: Initialization
+    jobs:
+      - job: TerraformInit
+        steps:
+          - task: TerraformInstaller@0  # Install Terraform
+            inputs:
+              terraformVersion: $(terraformVersion)
+
+          # Initialize Terraform
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              backendServiceArm: $(azureServiceConnection)
+              backendAzureRmResourceGroupName: $(backendResourceGroup)
+              backendAzureRmStorageAccountName: $(backendStorageAccount)
+              backendAzureRmContainerName: $(backendContainer)
+              backendAzureRmKey: $(backendKey)
+              command: 'init'  # Initialize Terraform
+              workingDirectory: 'terraform/env/prod'  # Set the working directory
+
+          # Validate Terraform configuration
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'  # Validate Terraform configuration
+              workingDirectory: 'terraform'
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'  # Run terraform plan
+              environmentServiceNameAzureRM: $(azureServiceConnection)  # Azure service connection for authentication
+              workingDirectory: 'terraform'  # Set the working directory
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'  # Run terraform apply
+              backendServiceArm: $(azureServiceConnection)
+              commandOptions: '--auto-approve'
+              environmentServiceNameAzureRM: $(azureServiceConnection)  # Azure service connection for authentication
+              workingDirectory: 'terraform'  # Set the working directory

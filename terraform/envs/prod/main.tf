@@ -1,21 +1,13 @@
-provider "azurerm" {
-  features {}
+resource "azurerm_resource_group" "cloud_platform" {
+  name     = var.resource_group_name
+  location = var.location
 }
 
+
 module "hub" {
-  source = "../../modules/hub"
-
-  name                         = "ent-hub-prod"
-  location                     = "East US"
-  resource_group_name          = "rg-ent-hub-prod"
-  vnet_address_space           = "10.0.0.0/16"
-  gateway_subnet_prefix        = "10.0.0.0/24"
-  firewall_subnet_prefix       = "10.0.1.0/24"
-  shared_services_subnet_prefix = "10.0.2.0/24"
-
-  tags = {
-    environment = "prod"
-    project     = "enterprise-cloud"
-    owner       = "infra-team"
-  }
+  source = "../../module/hub"
+  env = var.env
+  resource_group_name = azurerm_resource_group.cloud_platform.name
+  location = azurerm_resource_group.cloud_platform.location
+  vnet_address_space = var.vnet_address_space
 }
