@@ -13,9 +13,13 @@ variable "location" {
   type        = string
 }
 
-variable "resource_group_name" {
-  description = "Name of the resource group"
-  type        = string
+variable "resource_group_names" {
+  description = "Map of environment to resource group names"
+  type        = map(string)
+  default = {
+    dev  = "azureplatfrom-dev"
+    prod = "azureplatfrom-prod"
+  }
 }
 
 
