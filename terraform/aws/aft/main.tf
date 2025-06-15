@@ -42,6 +42,16 @@ module "aft-pipeline" {
   account_request_repo_name = "JespsonSTP/Multi_Cloud_Platform"  # Format: Org/Repo
   account_request_repo_branch = "aft-account-management"
 
+  # Use same repo, different branches
+  global_customizations_repo_name = "JespsonSTP/Multi_Cloud_Platform"
+  global_customizations_repo_branch = "aft-global-customizations"
+  
+  account_customizations_repo_name = "JespsonSTP/Multi_Cloud_Platform"
+  account_customizations_repo_branch = "aft-account-customizations"
+  
+  account_provisioning_customizations_repo_name = "JespsonSTP/Multi_Cloud_Platform"
+  account_provisioning_customizations_repo_branch = "aft-account-provisioning-customizations"
+
 
 
   # AFT Feature flags
