@@ -1,29 +1,48 @@
-provider "aws" {
-  region 	= "{{CT-HOME-REGION}}"
-  shared_config_files = ["%USERPROFILE%/.aws/config"]
-  profile = "{{NAME-OF-THE-MNG-PROFILE}}"
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+    }
+  }
+  backend "s3" {
+    bucket         = "foodies-aftbootstrap-tfstateprod"     
+    key            = "terraform.tfstate"
+    region         = "us-east-2"                  
+    dynamodb_table = "foodies-aftbootstrap-stateprod"            
+    encrypt        = true
+  }
 }
 
-module "aft_pipeline" {
+provider "aws" {
+  region 	= "us-east-2"
+}
+
+module "aft-pipeline" {
   source = "github.com/aws-ia/terraform-aws-control_tower_account_factory"
-  # Required Variables
-  ct_management_account_id                         = "{{CT-MANAGEMENT-ACCOUNT}}"
-  log_archive_account_id                           = "{{LOG-ARCHIVE-ACCOUNT}}"
-  audit_account_id                                 = "{{AUDIT-ACCOUNT}}"
-  aft_management_account_id                        = "{{AFT-MANAGEMENT-ACCOUNT}}"
-  ct_home_region                                   = "{{CT-HOME-REGION}}"
-  tf_backend_secondary_region                      = "{{CHOOSE-2ND-BACKUP-REGION}}"
+
+  # AFT Management Account ID (your management account)
+  aft_management_account_id = "309114413271"
   
-  # Terraform variables
-  terraform_version                                = "1.6.0"
-  terraform_distribution                           = "oss"
-    
-  # VCS Vars
-  vcs_provider                                     = "github"
-  account_request_repo_name                        = "{{Org}}/aft-account-request"
-  global_customizations_repo_name                  = "{{Org}}/aft-global-customizations"
-  account_customizations_repo_name                 = "{{Org}}/aft-account-customizations"
-  account_provisioning_customizations_repo_name    = "{{Org}}/aft-account-provisioning-customizations"
+  # Control Tower Home Region
+  ct_home_region = "us-east-2"
+  
+  # Control Tower Management Account ID (same as AFT management in your case)
+  ct_management_account_id = "309114413271"
+  
+  # Log Archive Account ID from Control Tower
+  log_archive_account_id = "445894898194"
+  
+  # Audit Account ID from Control Tower  
+  audit_account_id = "489836962439"
+  
+
+  # VCS Configuration - all pointing to your single repo
+  vcs_provider = "github"  # or "gitlab", "bitbucket", etc.
+  account_request_repo_name = "JespsonSTP/Multi_Cloud_Platform"  # Format: Org/Repo
+  account_request_repo_branch = "aft-account-management"
+
+
 
   # AFT Feature flags
   aft_feature_cloudtrail_data_events               = false
