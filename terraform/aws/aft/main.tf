@@ -39,10 +39,10 @@ module "aft-pipeline" {
 
   # VCS Configuration - all pointing to your single repo
   vcs_provider = "github"  # or "gitlab", "bitbucket", etc.
-  account_request_repo_name = "JespsonSTP/Multi_Cloud_Platform"  # Format: Org/Repo
+  account_request_repo_name = "JespsonSTP/Multi_Cloud_Platform"
   account_request_repo_branch = "aft-account-management"
-
-  # Use same repo, different branches
+  
+  # These lines are crucial - they tell AFT to use branches instead of separate repos
   global_customizations_repo_name = "JespsonSTP/Multi_Cloud_Platform"
   global_customizations_repo_branch = "aft-global-customizations"
   
