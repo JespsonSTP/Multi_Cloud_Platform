@@ -1,4 +1,10 @@
 aws s3api create-bucket --bucket foodies-aftbootstrap-tfstateprod --region us-east-2 --create-bucket-configuration LocationConstraint=us-east-2
 aws s3api put-bucket-versioning --bucket foodies-aftbootstrap-tfstateprod --versioning-configuration Status=Enabled
 
-aws dynamodb create-table --table-name foodies-aftbootstrap-stateprod --attribute-definitions AttributeName=LockID,AttributeType=S --key-schema AttributeName=LockID,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+aws dynamodb create-table --table-name foodies-orgunits-stateprod --attribute-definitions AttributeName=LockID,AttributeType=S --key-schema AttributeName=LockID,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+
+
+
+import and rename organization into terraform
+terraform import aws_organizations_organizational_unit.prod ou-xxxx-xxxxxxxx
+
